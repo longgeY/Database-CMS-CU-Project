@@ -53,5 +53,4 @@ http://127.0.0.1:8000
 ---
 
 ## 🚀 Run the test
-```bash
-python test.py
+python .\test.py
