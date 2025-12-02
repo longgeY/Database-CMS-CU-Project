@@ -1,73 +1,45 @@
-Count-Min Sketch (CMS) Streaming System
-A full implementation and evaluation framework for Count-Min Sketch (CMS), including:
-Core CMS with min, mean, and CMM estimators
-Conservative Updating (CU)
-Synthetic workload generator (Uniform & Zipf)
-Benchmark pipeline (error, skew, throughput)
-FastAPI-based streaming server
-Load generator for online testing
-Visualization tools for all experimental results
-This project provides a reproducible system for studying CMS accuracy–throughput tradeoffs in high-rate data streams.
+# Database-CMS-CU-Project
 
-cms/
-│
-├── cms.py               # Core CMS implementation
-├── benchmark.py         # Synthetic benchmark runner
-├── plot_results.py      # Visualization for all CSV outputs
-├── workloads.py         # Workload generators (Uniform, Zipf)
-├── run_sanity.py        # Quick correctness test
-├── run_all.ps1          # Full batch benchmark script
-│
-├── stream_server.py     # FastAPI streaming server exposing CMS
-├── load_client.py       # HTTP load generator for online testing
-│
-├── results/             # Generated experiment CSVs
-└── plots/               # Plots (error, IQR, skew, throughput)
+A high-performance streaming frequency estimation system based on the **Count-Min Sketch (CMS)** data structure, implemented in Python.  
+This project includes:
 
-🚀 Features
-✔ Count-Min Sketch
+- A FastAPI-based **stream server** that exposes CMS as an online HTTP service  
+- A **load client** that generates high-rate streaming updates  
+- A correctness test with exact ground-truth comparison  
+- Experiments evaluating error vs. ε, estimators, and Conservative Update  
+- Throughput analysis vs. table width and CU overhead  
+- Final plots and analysis used in the presentation
 
-Configurable via eps, delta
+---
 
-Supports min, mean, CMM estimators
+## 📌 Project Structure
 
-Uses row totals for CMM
 
-Mergeable sketches for distributed processing
+---
 
-✔ Conservative Updating (CU)
+## 📘 Features
 
-Only increments counters equal to the current minimum.
-Greatly reduces positive bias under skew.
+### ✔ Count-Min Sketch  
+- Supports **min**, **mean**, and **CMM** estimators  
+- Supports **Conservative Update (CU)**  
+- Guaranteed no underestimation for min estimator  
+- Error bound: `estimate ≤ true + ε·N`
 
-✔ Streaming Server (FastAPI)
+### ✔ Stream Server (FastAPI)  
+Exposes CMS via HTTP:
 
-Expose CMS through REST APIs:
+| Method | Endpoint         | Description |
+|--------|------------------|-------------|
+| POST   | `/reset`         | Reinitialize CMS (eps, delta, seed, CU) |
+| POST   | `/update`        | Single update |
+| POST   | `/batch_update`  | Batch updates |
+| POST   | `/query`         | Query with estimator=`min|mean|cmm` |
+| GET    | `/stats`         | Sketch parameters and total updates |
 
-POST /reset
+---
 
-POST /update
+## 🚀 How to Run the Server
 
-POST /batch_update
-
-POST /query
-
-GET /stats
-
-Suitable for real-time ingest experiments.
-
-✔ Benchmark & Plotting
-
-Evaluate:
-
-Error vs epsilon
-
-Estimator stability
-
-Skew sensitivity
-
-Throughput vs width
-
-CU on/off comparison
-
-Plots include median, IQR, and p95 curves.
+### 1. Install packages
+```bash
+pip install fastapi uvicorn
