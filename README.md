@@ -43,3 +43,14 @@ Exposes CMS via HTTP:
 ### 1. Install packages
 ```bash
 pip install fastapi uvicorn
+
+### 1. Start the server
+```bash
+uvicorn stream_server:app --host 0.0.0.0 --port 8000
+
+The server will start on:
+```bash
+[uvicorn stream_server:app --host 0.0.0.0 --port 8000
+](http://127.0.0.1:8000
+)
+
