@@ -50,3 +50,8 @@ uvicorn stream_server:app --host 0.0.0.0 --port 8000
 The server will start on:
 http://127.0.0.1:8000
 
+---
+
+## 🚀 Run the test
+```bash
+python test.py
