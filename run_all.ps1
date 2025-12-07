@@ -69,7 +69,7 @@ foreach ($eps in $epsList) {
 Write-Host "=== All runs finished. Merging CSVs... ==="
 Add-Content -Path $logFile -Value "=== All runs finished. Merging CSVs... ==="
 
-# ---- 合并所有本次 CSV 为一份 ----
+# ---- 合并所有本次 CSV ----
 $merged = Join-Path $runDir "all_results_merged.csv"
 $csvs = Get-ChildItem -Path $runDir -Filter *.csv | Where-Object { $_.Name -ne "all_results_merged.csv" }
 

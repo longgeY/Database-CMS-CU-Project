@@ -3,7 +3,7 @@ from cms import CMS
 from workloads import UniformKeys
 
 def main():
-    eps, delta = 0.001, 1e-3   # <--- 建议先调小 eps
+    eps, delta = 0.001, 1e-3   
     cms = CMS.from_eps_delta(eps, delta, seed=1)
     truth = Counter()
 

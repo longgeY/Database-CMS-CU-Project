@@ -10,7 +10,6 @@ plt.rcParams["axes.grid"] = True
 
 def load_csv(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
-    # 规范化类型
     if "use_cu" in df.columns:
         df["use_cu"] = df["use_cu"].astype(int)
     return df

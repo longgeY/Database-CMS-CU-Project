@@ -23,7 +23,6 @@ def run_one_trial(eps, delta, N, U, workload, alpha, use_cu, Q, seed):
     cms = CMS.from_eps_delta(eps, delta, seed=seed)
     truth = Counter()
 
-    # 可选：重键（让评测里一定有高频项）
     hot_key, hot_count = 123456789, 1000
     for _ in range(hot_count):
         if use_cu: cms.update_cu(hot_key, 1)
@@ -40,7 +39,6 @@ def run_one_trial(eps, delta, N, U, workload, alpha, use_cu, Q, seed):
     else:
         raise ValueError("workload must be uniform|zipf")
 
-    # 更新吞吐计时
     t0 = time.perf_counter()
     for _ in range(N):
         k = sampler()
@@ -50,7 +48,6 @@ def run_one_trial(eps, delta, N, U, workload, alpha, use_cu, Q, seed):
     t1 = time.perf_counter()
     updates_per_sec = N / (t1 - t0 + 1e-9)
 
-    # 采样查询集：从出现过的键里挑 Q/2，再混入没出现过的键 Q/2
     seen_keys = list(truth.keys())
     if len(seen_keys) == 0:
         seen_sample = []
@@ -59,7 +56,6 @@ def run_one_trial(eps, delta, N, U, workload, alpha, use_cu, Q, seed):
     unseen_sample = [rng.randrange(1, U+1) for _ in range(Q - len(seen_sample))]
     query_keys = seen_sample + unseen_sample
 
-    # 查询吞吐计时 + 误差统计
     abs_err_min, abs_err_mean, abs_err_cmm = [], [], []
     t2 = time.perf_counter()
     for k in query_keys:
@@ -74,7 +70,6 @@ def run_one_trial(eps, delta, N, U, workload, alpha, use_cu, Q, seed):
     t3 = time.perf_counter()
     qps = len(query_keys) / (t3 - t2 + 1e-9)
 
-    # 汇总
     med_min, iqr_min, p95_min   = summarize(abs_err_min)
     med_mean, iqr_mean, p95_mean= summarize(abs_err_mean)
     med_cmm, iqr_cmm, p95_cmm   = summarize(abs_err_cmm)
@@ -119,7 +114,6 @@ def main():
         print(f"[trial {t}] w={r['w']} d={r['d']}  u/s={r['updates_per_sec']:.0f}  qps={r['qps']:.0f}  "
               f"med_min={r['med_min']:.2f} med_cmm={r['med_cmm']:.2f}")
 
-    # 写 CSV
     fieldnames = ["trial","eps","delta","N","U","workload","alpha","use_cu","w","d",
                   "updates_per_sec","qps",
                   "med_min","iqr_min","p95_min",

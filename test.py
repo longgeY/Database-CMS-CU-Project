@@ -18,7 +18,6 @@ def test_small():
 
     true_count = defaultdict(int)
 
-    # 随便做 5000 次更新，key 空间小一点（0~99）
     NUM_UPDATES = 5000
     KEY_SPACE = 100
 
@@ -27,7 +26,6 @@ def test_small():
         true_count[k] += 1
         requests.post(f"{BASE}/update", json={"key": k, "c": 1})
 
-    # 抽一些 key 来查
     test_keys = random.sample(list(true_count.keys()), 20)
 
     max_err = 0
@@ -37,7 +35,7 @@ def test_small():
         truth = true_count[k]
         resp = requests.post(f"{BASE}/query", json={
             "key": k,
-            "estimator": "min"   # 或 "mean" / "cmm"
+            "estimator": "min"  
         }).json()
         est = resp["estimate"]
         err = est - truth

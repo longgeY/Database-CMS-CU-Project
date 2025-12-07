@@ -17,12 +17,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from threading import Lock
 
-from cms import CMS  # 直接复用你写好的 CMS 实现
+from cms import CMS 
 
 
-# ---------- 配置 & 全局状态 ----------
+# ----------Configuration & Global Status----------
 
-# 默认参数（可以用环境变量覆盖）
+# Default parameters (can be overridden using environment variables)
 DEFAULT_EPS = float(os.getenv("CMS_EPS", "1e-3"))
 DEFAULT_DELTA = float(os.getenv("CMS_DELTA", "1e-3"))
 DEFAULT_SEED = int(os.getenv("CMS_SEED", "1"))
@@ -39,21 +39,19 @@ def _init_cms(eps: float = DEFAULT_EPS,
               delta: float = DEFAULT_DELTA,
               seed: int = DEFAULT_SEED,
               use_cu: bool = DEFAULT_USE_CU) -> None:
-    """初始化或重置全局 CMS 实例。"""
+    """Initialize or reset the global CMS instance."""
     global _cms, _use_cu
     with _cms_lock:
         _cms = CMS.from_eps_delta(eps, delta, seed=seed)
-        # 如果你的 CMS 里有 row_totals 需要初始化，这里可以补一行：
         if _cms.row_totals is None:
             _cms.row_totals = [0] * _cms.d
         _use_cu = use_cu
 
 
-# 启动时先初始化一次
 _init_cms()
 
 
-# ---------- 请求 / 响应模型 ----------
+# ---------- Request/Response Model ----------
 
 class ResetRequest(BaseModel):
     eps: float
@@ -92,11 +90,11 @@ class StatsResponse(BaseModel):
     total_updates: int
 
 
-# ---------- 路由实现 ----------
+# ---------- Routing implementation ----------
 
 @app.post("/reset")
 def reset(req: ResetRequest):
-    """重置 CMS 参数（eps, delta, use_cu, seed）."""
+    """reset CMS paremeters（eps, delta, use_cu, seed）."""
     _init_cms(eps=req.eps, delta=req.delta, seed=req.seed, use_cu=req.use_cu)
     return {
         "status": "ok",
@@ -106,7 +104,7 @@ def reset(req: ResetRequest):
 
 @app.post("/update")
 def update(req: UpdateRequest):
-    """单条更新 (i, c)."""
+    """update single (i, c)."""
     if _cms is None:
         raise HTTPException(status_code=500, detail="CMS not initialized")
     with _cms_lock:
@@ -120,7 +118,7 @@ def update(req: UpdateRequest):
 
 @app.post("/batch_update")
 def batch_update(req: BatchUpdateRequest):
-    """批量更新，适合压测."""
+    """Batch updates, suitable for load testing."""
     if _cms is None:
         raise HTTPException(status_code=500, detail="CMS not initialized")
     with _cms_lock:
@@ -135,7 +133,7 @@ def batch_update(req: BatchUpdateRequest):
 
 @app.post("/query", response_model=QueryResponse)
 def query(req: QueryRequest):
-    """点查询，支持 min / mean / cmm 三种估计器."""
+    """Point queries support three estimators: min, mean, and cmm."""
     if _cms is None:
         raise HTTPException(status_code=500, detail="CMS not initialized")
     with _cms_lock:
@@ -159,12 +157,12 @@ def query(req: QueryRequest):
 
 @app.get("/stats", response_model=StatsResponse)
 def stats():
-    """返回当前 sketch 状态（d, w, 是否 CU 等）."""
+    """Returns the current sketch state (d, w, whether it is CU, etc.)."""
     if _cms is None:
         raise HTTPException(status_code=500, detail="CMS not initialized")
-    # 这里只读，不改，就不用锁也问题不大；稳一点可以加锁
+    
     with _cms_lock:
-        eps = DEFAULT_EPS  # 这里简单用默认值；也可以在 _cms 里存 eps / delta
+        eps = DEFAULT_EPS 
         delta = DEFAULT_DELTA
         d = _cms.d
         w = _cms.w
