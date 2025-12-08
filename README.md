@@ -50,14 +50,23 @@ Exposes CMS via HTTP:
 ### 1. Install packages
 ```bash
 pip install fastapi uvicorn
+```
 
-Start the server
+### 2. Start the server
+```bash
 uvicorn stream_server:app --host 0.0.0.0 --port 8000
+```
+The server will start on: http://127.0.0.1:8000
 
-The server will start on:
-http://127.0.0.1:8000
+### 3. Run Uniform Load Test
+```bash
+python load_client.py --dist uniform --rate 1000 --duration 10
+```
 
----
+### 4. Run Zipf Load Test
+```bash
+python load_client.py --dist zipf --alpha 1.0 --rate 1000 --duration 10
+```
 
-## 🚀 Run the test
+## 🚀 Run the test(simple test)
 python .\test.py
