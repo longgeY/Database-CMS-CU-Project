@@ -13,14 +13,23 @@ This project includes:
 ---
 
 ## 📌 Project Structure
+
+```bash
 cms/
-├── cms.py # Core CMS implementation
-├── stream_server.py # FastAPI streaming server
-├── load_client.py # Load generator (Uniform + Zipf)
-├── eval_error.py # Accuracy evaluation scripts
-├── eval_throughput.py # Throughput benchmarking
-├── results/ # CSV logs and figures
-├── README.md # Project documentation
+├── benchmark.py        # Main benchmarking script for running accuracy and throughput experiments
+├── cms.py              # Core implementation of the Count-Min Sketch data structure
+├── load_client.py      # Streaming load generator (uniform and Zipf workloads)
+├── plot_results.py     # Script for visualizing experimental results using Matplotlib
+├── README.md           # Project documentation and usage instructions
+├── run_all.ps1         # PowerShell script to run the full experiment pipeline (Windows)
+├── run_sanity.py       # Sanity check script for basic correctness testing
+├── stream_server.py    # FastAPI-based CMS streaming server implementation
+├── test.py             # Correctness testing with ground-truth comparison
+├── workloads.py        # Workload generators (uniform and Zipf distributions)
+├── plots/              # Generated figures and visualization output
+├── results/            # Raw experimental CSV results
+└── __pycache__/
+```
 
 ---
 
@@ -69,4 +78,6 @@ python load_client.py --dist zipf --alpha 1.0 --rate 1000 --duration 10
 ```
 
 ## 🚀 Run the test(simple test)
+```bash
 python .\test.py
+```
