@@ -13,7 +13,14 @@ This project includes:
 ---
 
 ## 📌 Project Structure
-
+cms/
+├── cms.py # Core CMS implementation
+├── stream_server.py # FastAPI streaming server
+├── load_client.py # Load generator (Uniform + Zipf)
+├── eval_error.py # Accuracy evaluation scripts
+├── eval_throughput.py # Throughput benchmarking
+├── results/ # CSV logs and figures
+├── README.md # Project documentation
 
 ---
 
